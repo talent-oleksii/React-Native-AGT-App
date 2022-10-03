@@ -2,19 +2,11 @@ import React, { useRef, useState } from "react";
 import { DrawerLayoutAndroid, Text, StyleSheet, View } from "react-native";
 import { List, Divider } from "react-native-paper";
 import { Image } from "react-native-elements";
-import { DefaultTheme, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 import Dashboard from "./Dashboard";
 
 const DashboardScreen = () => {
-  const MyTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      background: "rgb(255, 255, 255)",
-    },
-  };
-
   const navigation = useNavigation();
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState("left");

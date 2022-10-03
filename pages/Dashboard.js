@@ -1,23 +1,10 @@
-import { Component } from "react";
 import { Image } from "react-native-elements";
 import { StyleSheet, Text, View } from "react-native";
-import { Button, TouchableRipple } from "react-native-paper";
+import { Button } from "react-native-paper";
 import {
-  NavigationContainer,
   DefaultTheme,
   useNavigation,
 } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import { StatusBar } from "expo-status-bar";
-
-const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "rgb(255, 255, 255)",
-  },
-};
 
 const Dashboard = () => {
   const navigation = useNavigation();
@@ -106,14 +93,12 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   container: {
-    // width: '80%',
   },
   items: {
     width: 150,
     margin: 15,
     height: 150,
     borderRadius: 15,
-    // backgroundColor: '#003F7D',
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
@@ -127,7 +112,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
     color: "#003F7D",
-    // color: 'white',
   },
   username: {
     margin: 10,

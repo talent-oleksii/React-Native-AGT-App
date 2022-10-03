@@ -1,18 +1,10 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native'
-import { TextInput, Button, DataTable, SegmentedButtons, Divider, RadioButton } from "react-native-paper"
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { TextInput, Button, DataTable, RadioButton } from "react-native-paper"
 import { Input, Text } from 'react-native-elements';
 
 const AssignReturnScreen = () =>{
-
-    const [date, setDate] = useState('');
-    const [entryDate, setEntryDate] = useState('');
-
-    const [pickupDate, setPickupDate] = useState('');
     const [checked, setChecked] = useState('first');
-    const [value, setValue] = useState('first');
-
 
     return(
         <View style = {styles.body}>
@@ -198,7 +190,6 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     addButton: {
-        // minWidth: 55,
         width: 50,
         borderColor: 'black',
     },
@@ -253,7 +244,6 @@ const styles = StyleSheet.create({
     },
     layout7Button:{
         minWidth: 120,
-        // width: 100,
         margin: 5,
     },
     layout8:{
