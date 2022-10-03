@@ -3,13 +3,16 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import {
   TextInput,
   Button,
-  SegmentedButtons,
   Text,
   Divider,
 } from "react-native-paper";
+import {
+  useNavigation,
+} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const Transactions = () => {
+  const navigation = useNavigation();
   const [viewMode, setViewMode] = useState("ALL");
   return (
     <View style={styles.body}>
@@ -135,8 +138,7 @@ const Transactions = () => {
         <Divider style={styles.trasactionDivider} />
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footerText}>New Requisition</Text>
-        <Button style={styles.addButton} mode="contained" buttonColor="green">
+        <Button style={styles.addButton} mode="contained" buttonColor="green" onPress={ ()=>{ navigation.navigate("Requisition Entry Screen") }}>
           <Icon name="plus" color={"white"}></Icon>
         </Button>
       </View>

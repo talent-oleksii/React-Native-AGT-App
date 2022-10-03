@@ -1,24 +1,23 @@
 import React, { useRef, useState } from "react";
 import { List, Divider } from "react-native-paper";
-import { DrawerLayoutAndroid, Text, StyleSheet, View } from "react-native";
-import { DefaultTheme, useNavigation } from "@react-navigation/native";
+import {
+  DrawerLayoutAndroid,
+  Text,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Image } from "react-native-elements";
+import RequisitionEntry from './RequisitionEntry';
+import {
+  useNavigation,
+} from "@react-navigation/native";
 
-import Transactions from "./Transactions";
-
-const TransactionsScreen = () => {
-  const MyTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      background: "rgb(255, 255, 255)",
-    },
-  };
+const RequisitionEntryScreen = () => {
 
   const navigation = useNavigation();
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState("left");
-
+  
   const navigationView = () => (
     <View style={styles.container}>
       <View style={styles.drawerHeader}>
@@ -90,7 +89,7 @@ const TransactionsScreen = () => {
       drawerPosition={drawerPosition}
       renderNavigationView={navigationView}
     >
-      <Transactions />
+      <RequisitionEntry />
     </DrawerLayoutAndroid>
   );
 };
@@ -131,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TransactionsScreen;
+export default RequisitionEntryScreen;

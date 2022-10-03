@@ -3,14 +3,11 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./Login";
 import Signup from "./Signup";
-import Dashboard from "./Dashboard";
-import Items from "./Items";
-import Transactions from "./Transactions";
-import RetailerReceival from "./RetailerReceival";
 import DashboardScreen from "./DashboardScreen";
 import ItemsScreen from './ItemsScreen';
 import TransactionsScreen from "./TransactionsScreen";
 import RetailerReceivalScreen from "./RetailerReceivalScreen";
+import RequisitionEntryScreen from "./RequisitionEntryScreen";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -32,6 +29,7 @@ const MainNavigator = () => {
         <Stack.Screen name="ItemsScreen" component={ItemsScreen} />
         <Stack.Screen name="TransactionsScreen" component={TransactionsScreen} />
         <Stack.Screen name="RetailerReceivalScreen" component={RetailerReceivalScreen} />
+        <Stack.Screen name="Requisition Entry Screen" component={RequisitionEntryScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
