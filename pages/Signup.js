@@ -1,23 +1,44 @@
 import React, { useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, AsyncStorage } from 'react-native'
 import { Input, Image } from 'react-native-elements';
 import { Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import RNPickerSelect from 'react-native-picker-select';
+import axios from 'axios';
 
 const Signup = () => {
     
+    const [userType, setUserType] = useState(1);
+    const [username, setUserName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const navigation = useNavigation();
 
     const login = () => {
         navigation.navigate('Signin')
     }
 
-    const [selectedValue, setSelectedValue] = useState("Technician");
-
-    // signup = (email, pass) => {
-    //     alert('Signup: email: ' + email + ' password: ' + pass)
-    // }
+    const signup = () => {
+        axios
+         .post("http://192.168.106.71:5000/api/users/signup",{
+            username : username,
+            password : password,
+            email : email,
+            usertype: userType,
+         })
+        .then((res) => {
+            AsyncStorage.multiSet([
+                ["email", res.data['email']],
+                ["password", res.data['password']],
+                ["username", res.data['username']],
+              ])
+            alert('success');
+            navigation.navigate("DashboardScreen");
+        })
+        .catch((err) => {
+            alert(err.response.data);
+        });
+    }
 
       return (
         <View style = {styles.body}>
@@ -32,32 +53,35 @@ const Signup = () => {
             </Text>
             <Input
                 placeholder='Name'
+                onChangeText={ (newText) => { setUserName(newText) } }
             />
 
             <Input
                 placeholder='Email'
+                onChangeText={ (newText) => { setEmail(newText) } }
             />
 
             <Input
                 placeholder='Password'
                 secureTextEntry
+                onChangeText={ (newText) => { setPassword(newText); } }
             />
             
             <RNPickerSelect
-                onValueChange={(value) => console.log(value)}
-                placeholder={{ label: "Select User Type", }}
+                onValueChange={(value) => setUserType(value)}
+                placeholder={{ label: "Select User Type" }}
                 placeholderTextColor="#EEEEEE"
                 items={[
-                    { label: 'Technician', value: 'technician' },
-                    { label: 'Warehouse Personel', value: 'warehouse_personel' },
+                    { label: 'Technician', value: '1' },
+                    { label: 'Warehouse Personel', value: '2' },
                 ]}
             />
 
             <View style = {styles.signinBtn}>
                 <Button
                     mode="contained"
-                    // textColor="#FF8E00"
                     buttonColor="#003F7D"
+                    onPress={signup}
                 >
                     Sign Up
                 </Button>

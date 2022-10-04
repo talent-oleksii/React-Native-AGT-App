@@ -1,22 +1,19 @@
 import { Component, useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Image } from "react-native-elements";
 import { List, TextInput, Button } from "react-native-paper";
+import AwesomeIcon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
 
-const Items = () => {
-  const [items_list, setItemsList] = useState([]);
-  // useEffect(() => {
-  //   items_list = itemslist;
-  // }, [itemslist]);
-  
+const RetailerData = () => {
+  const [retailer_list, setRetailerList] = useState([]);
+
   useEffect(() => {
     axios
-      .get("http://192.168.106.71:5000/api/items/getitems")
+      .get("http://192.168.106.71:5000/api/retailer/getretailer")
       .then((res) => {
         console.log(res.data);
-        // items_list = res.data;
-        setItemsList(res.data);
-        // console.log(items_list)
+        setRetailerList(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -32,7 +29,7 @@ const Items = () => {
           onPress={() => console.log("Pressed")}
           style={styles.headerButton}
         />
-        <Text style={styles.headerText}> Items </Text>
+        <Text style={styles.headerText}> Reatiler Data </Text>
         <TextInput
           style={styles.searchInput}
           label="search"
@@ -41,14 +38,17 @@ const Items = () => {
         />
       </View>
       <View style={styles.container}>
-        {items_list.map((item, index) => {
+        {retailer_list.map((retailer, index) => {
           return (
             <List.Item
               style={styles.listItem}
-              title={item.name}
-              description={item.description}
-              right={(props) => (
-                <Text style={styles.itemQuantityText}>{item.quantity}</Text>
+              title={retailer.name}
+              description={retailer.description}
+              left={(props) => (
+                <Image
+                  source={require("./assets/retailer-avatar.png")}
+                  style={{ width: 50, height: 50 }}
+                />
               )}
             />
           );
@@ -63,7 +63,7 @@ const Items = () => {
   );
 };
 
-export default Items;
+export default RetailerData;
 
 const styles = StyleSheet.create({
   body: {
@@ -91,12 +91,11 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     margin: 15,
-    marginLeft: 75,
+    marginLeft: -20,
     width: 150,
     fontSize: 20,
   },
   container: {
-    // width: "100%",
     paddingHorizontal: 10,
   },
   itemQuantityText: {

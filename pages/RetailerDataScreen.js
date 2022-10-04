@@ -1,16 +1,23 @@
 import React, { useRef, useState } from "react";
-import { DrawerLayoutAndroid, Text, StyleSheet, View } from "react-native";
 import { List, Divider } from "react-native-paper";
+import {
+  DrawerLayoutAndroid,
+  Text,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Image } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
+import RetailerData from './RetailerData';
+import {
+  useNavigation,
+} from "@react-navigation/native";
 
-import Dashboard from "./Dashboard";
+const RetailerDataScreen = () => {
 
-const DashboardScreen = () => {
   const navigation = useNavigation();
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState("left");
-
+  
   const navigationView = () => (
     <View style={styles.container}>
       <View style={styles.drawerHeader}>
@@ -21,7 +28,7 @@ const DashboardScreen = () => {
           />
         </View>
         <View>
-          <Text style={styles.drawerUsername}>User Name</Text>
+          <Text style={styles.drawerUsername}>Ryuusei Tei</Text>
           <Text style={styles.drawerUserword}>Noting but the BEST</Text>
         </View>
       </View>
@@ -82,7 +89,7 @@ const DashboardScreen = () => {
       drawerPosition={drawerPosition}
       renderNavigationView={navigationView}
     >
-      <Dashboard />
+      <RetailerData />
     </DrawerLayoutAndroid>
   );
 };
@@ -123,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DashboardScreen;
+export default RetailerDataScreen;

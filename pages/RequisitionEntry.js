@@ -7,14 +7,14 @@ import ThemedListItem from "react-native-elements/dist/list/ListItem";
 
 const RequisitionEntry = () => {
   const [visible, setVisible] = React.useState(false);
-  const [add_item_name, setAddItemName] = React.useState('');
-  const [add_item_quantity, setAddItemQuantity] = React.useState('');
+  const [add_item_name, setAddItemName] = React.useState("");
+  const [add_item_quantity, setAddItemQuantity] = React.useState("");
   const [refresh, setFresh] = React.useState(false);
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
-  const items_list = [
+  const [items_list, setItem_list] = React.useState([
     {
       id: 1,
       name: "Earnest Green",
@@ -39,29 +39,24 @@ const RequisitionEntry = () => {
       qty: 4,
       visible: true,
     },
-  ];
+  ]);
 
-  const delete_item = (id, e) => {
-    // items_list.slice({id: id}, 1);
-    // items_list.d
-    // alert("1");
-    // items_list.slice(id, 1);
-    // items_list.delete(id);
-    items_list.forEach(item => {
-        if(item.id == id) {
-            item.visible = false;
-        }
-    });
-    console.log(items_list);
-    setFresh(!refresh);
-  }
+  const delete_item = (index) => {
+    let items = [...items_list];
+    items[index].visible = false;
+    setItem_list(items);
+  };
 
-   const add_item = (itemName, itemQty, e) => {
-    items_list.push(items_list.length + 1, itemName, itemQty, true);
-    console.log(items_list);
+  const add_item = (itemName, itemQty, e) => {
+    let id = items_list.length + 1;
+    let name = itemName;
+    let qty = itemQty;
+    let visible = true;
+    let items = items_list.concat({ id, name, qty, visible });
+    console.log(items);
+    setItem_list(items);
     hideDialog();
-    setFresh(!refresh);
-   }
+  };
 
   return (
     <Provider>
@@ -116,17 +111,19 @@ const RequisitionEntry = () => {
               </DataTable.Title>
               <DataTable.Title onPress={showDialog}>New</DataTable.Title>
             </DataTable.Header>
-            {items_list.map((item) => {
+            {items_list.map((item, index) => {
               return (
-                item.visible && 
-                <DataTable.Row>
-                  <DataTable.Cell>{item.name}</DataTable.Cell>
-                  <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
-                    {item.qty}
-                  </DataTable.Cell>
-                  <DataTable.Cell onPress={e => delete_item(item.id, e)}>X</DataTable.Cell>
-                </DataTable.Row>
-                
+                item.visible && (
+                  <DataTable.Row key={index}>
+                    <DataTable.Cell>{item.name}</DataTable.Cell>
+                    <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
+                      {item.qty}
+                    </DataTable.Cell>
+                    <DataTable.Cell onPress={(e) => delete_item(index)}>
+                      X
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                )
               );
             })}
           </DataTable>
@@ -146,11 +143,23 @@ const RequisitionEntry = () => {
           <Dialog visible={visible} onDismiss={hideDialog}>
             <Dialog.Title>Add Item</Dialog.Title>
             <Dialog.Content>
-              <Input placeholder="Item Name" onChangeText={newItemName => setAddItemName(newItemName)}></Input>
-              <Input placeholder="Quantity" onChangeText={newItemQuantity => setAddItemQuantity(newItemQuantity)}></Input>
+              <Input
+                placeholder="Item Name"
+                onChangeText={(newItemName) => setAddItemName(newItemName)}
+              ></Input>
+              <Input
+                placeholder="Quantity"
+                onChangeText={(newItemQuantity) =>
+                  setAddItemQuantity(newItemQuantity)
+                }
+              ></Input>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={ e => add_item(add_item_name, add_item_quantity, e)}>Add</Button>
+              <Button
+                onPress={(e) => add_item(add_item_name, add_item_quantity, e)}
+              >
+                Add
+              </Button>
               <Button onPress={hideDialog}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>

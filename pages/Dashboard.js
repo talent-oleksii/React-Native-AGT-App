@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View, AsyncStorage } from "react-native";
+
 import { Image } from "react-native-elements";
-import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import {
   DefaultTheme,
@@ -8,7 +10,19 @@ import {
 
 const Dashboard = () => {
   const navigation = useNavigation();
-  return (
+
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  
+  useEffect(() => {
+    AsyncStorage.multiGet(['email', 'username']).then((data) => {
+      setEmail(data[0][1]);
+      setUsername(data[1][1]);
+    });
+  }, []);
+  
+
+    return (
     <View style={styles.body}>
       <View
         style={{
@@ -25,7 +39,7 @@ const Dashboard = () => {
           source={require("./assets/avatar.png")}
           style={{ width: 150, height: 150 }}
         />
-        <Text style={styles.username}>User Name</Text>
+        <Text style={styles.username}>{username}</Text>
         <Button
           mode="outlined"
           style={styles.signout}

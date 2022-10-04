@@ -63,7 +63,7 @@ const RequisitionEntryScreen = () => {
               title="Retailer"
               onPress={() => {
                 drawer.current.closeDrawer(),
-                  navigation.navigate("RetailerReceivalScreen");
+                  navigation.navigate("RetailerDataScreen");
               }}
             />
             <Divider />

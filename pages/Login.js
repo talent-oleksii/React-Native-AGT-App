@@ -1,38 +1,39 @@
 import React, { Component, useState } from "react";
-import { View, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { View, TouchableOpacity, TextInput, StyleSheet, AsyncStorage } from "react-native";
 import { Input, Image } from "react-native-elements";
 import { Text, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { username, useremail } from "./globalvari";
 
 const Login = () => {
   const navigation = useNavigation();
   const [passwordViewMode, setPasswordViewMode] = useState(true);
   const [passwordIconName, setPasswordIconName] = useState("eye");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: "admin", password: "password" }),
-  };
-
-  const login = async () => {
-    // try {
-    //     await fetch(
-    //         'localhost:8000/employee/login', requestOptions)
-    //         .then(response => {
-    //             response.json()
-    //                 .then(data => {
-    //                     // alert("Post created at : ",
-    //                     // data.createdAt);
-    //                     alert(data);
-    //                 });
-    //         })
-    // }
-    // catch (error) {
-    //     console.error(error);
-    // }
-
-    navigation.navigate("DashboardScreen");
+  const login = () => {
+    axios
+      .post("http://192.168.106.71:5000/api/users/login", {
+        password: password,
+        email: email,
+      })
+      .then((res) => {
+        console.log(res.data);
+        AsyncStorage.multiSet([
+          ["email", res.data['email']],
+          ["password", res.data['password']],
+          ["username", res.data['username']],
+        ])
+        
+        alert("Welcome " + res.data['username'] + "!");
+        navigation.navigate("DashboardScreen");
+      })
+      .catch((err) => {
+        // alert(err.response.data);
+        alert("Error");
+      });
   };
 
   const signup = () => {
@@ -48,9 +49,16 @@ const Login = () => {
         />
 
         <Text style={styles.headerText}>Sign In</Text>
-        <Input placeholder="Email" />
+        <Input
+          placeholder="Email"
+          onChangeText={(newText) => setEmail(newText)}
+        />
 
-        <Input placeholder="Password" secureTextEntry={passwordViewMode} />
+        <Input
+          placeholder="Password"
+          secureTextEntry={passwordViewMode}
+          onChangeText={(value) => setPassword(value)}
+        />
 
         <View style={styles.signinBtn}>
           <Button
