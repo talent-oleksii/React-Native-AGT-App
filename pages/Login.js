@@ -1,10 +1,15 @@
 import React, { Component, useState } from "react";
-import { View, TouchableOpacity, TextInput, StyleSheet, AsyncStorage } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  AsyncStorage,
+} from "react-native";
 import { Input, Image } from "react-native-elements";
 import { Text, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import { username, useremail } from "./globalvari";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -26,15 +31,14 @@ const Login = () => {
     //       ["password", res.data['password']],
     //       ["username", res.data['username']],
     //     ])
-        
+
     //     alert("Welcome " + res.data['username'] + "!");
     //     navigation.navigate("DashboardScreen");
     //   })
     //   .catch((err) => {
     //     alert("Error");
     //   });
-      navigation.navigate("DashboardScreen");
-
+    navigation.navigate("DashboardScreen");
   };
 
   const signup = () => {

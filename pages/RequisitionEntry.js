@@ -4,9 +4,12 @@ import { View, StyleSheet } from "react-native";
 import { TextInput, Button, DataTable } from "react-native-paper";
 import { Input, Text } from "react-native-elements";
 import ThemedListItem from "react-native-elements/dist/list/ListItem";
+import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
 const RequisitionEntry = () => {
+  const navigation = useNavigation();
+
   const [visible, setVisible] = React.useState(false);
   const [add_item_name, setAddItemName] = React.useState("");
   const [add_item_quantity, setAddItemQuantity] = React.useState("");
@@ -39,10 +42,21 @@ const RequisitionEntry = () => {
   };
 
   const submit = (e) => {
-    axios.post(
-      "http://192.168.106.71:5000/api/transactions/newpendingrequisition",
-      {}
-    );
+    axios
+      .post(
+        "http://192.168.106.71:5000/api/transactions/newpendingrequisition",
+        {
+          entry_date: entry_date,
+          pickup_date: pickup_date,
+          retailer: retailer,
+          description: description,
+          items_qty: items_list,
+        }
+      )
+      .then((res) => {
+        navigation.navigate("TransactionsScreen");
+      })
+      .catch((err) => alert("error"));
   };
 
   return (
@@ -56,17 +70,13 @@ const RequisitionEntry = () => {
             style={styles.headerButton}
           />
           <Text style={styles.headerText}>REQUISITION ENTRY</Text>
-          <TextInput
-            style={styles.searchInput}
-            label="Requisition Number"
-            mode="outlined"
-          />
         </View>
         <View style={styles.layout1}>
           <View style={styles.datePicker}>
             <Input
               placeholder="Entry Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
+              onChangeText={(newText) => setEntryDate(newText)}
             />
           </View>
 
@@ -74,20 +84,21 @@ const RequisitionEntry = () => {
             <Input
               placeholder="Pickup Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
+              onChangeText={(newText) => setPickupDate(newText)}
             />
           </View>
         </View>
-        <View style={styles.layout2}>
-          <Text style={styles.statusText}>Status</Text>
-        </View>
         <View style={styles.layout3}>
-          <Input placeholder="Retailer" />
+          <Input
+            placeholder="Retailer"
+            onChangeText={(newText) => setRetailer(newText)}
+          />
         </View>
         <View style={styles.layout4}>
-          <Input placeholder="Description" />
-        </View>
-        <View style={styles.layout5}>
-          <Text style={styles.requiredText}>Part Required</Text>
+          <Input
+            placeholder="Description"
+            onChangeText={(newText) => setDescription(newText)}
+          />
         </View>
         <View style={styles.layout6}>
           <DataTable>
@@ -137,13 +148,13 @@ const RequisitionEntry = () => {
               <Input
                 placeholder="Item Name"
                 onChangeText={(newItemName) => setAddItemName(newItemName)}
-              ></Input>
+              />
               <Input
                 placeholder="Quantity"
                 onChangeText={(newItemQuantity) =>
                   setAddItemQuantity(newItemQuantity)
                 }
-              ></Input>
+              />
             </Dialog.Content>
             <Dialog.Actions>
               <Button
