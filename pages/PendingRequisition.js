@@ -4,30 +4,72 @@ import { View, StyleSheet, AsyncStorage } from "react-native";
 import { TextInput, Button, DataTable } from "react-native-paper";
 import { Input, Text } from "react-native-elements";
 import ThemedListItem from "react-native-elements/dist/list/ListItem";
+import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
 const PendingRequisition = () => {
+  const navigation = useNavigation();
+
   const [entry_date, setEntryDate] = React.useState("");
   const [pickup_date, setPickupDate] = React.useState("");
   const [retailer, setRetailer] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [items_list, setItem_list] = React.useState([]);
 
+  var child_transaction_number;
   React.useEffect(() => {
-    var child_transaction_number;
     AsyncStorage.multiGet(["child_transaction_number", "email"]).then(
       (data) => {
-        // console.log(data);
         child_transaction_number = data[0][1];
         axios
-          .get(
-            "http://192.168.196.71:5000/api/transactions/getpendingrequisition?id=" +
-              child_transaction_number
+          .post(
+            "http://192.168.106.71:5000/api/transactions/getpendingrequisition",
+            {
+              child_transaction_number: child_transaction_number,
+            }
           )
-          .then((res) => {});
+          .then((res) => {
+            setEntryDate(res.data.entry_date);
+            setPickupDate(res.data.pickup_date);
+            setRetailer(res.data.retailer);
+            setDescription(res.data.description);
+            setItem_list(res.data.items_qty);
+          })
+          .catch((err) => console.log(err));
       }
     );
-  });
+  }, []);
+
+  const Approve = (e) => {
+    axios
+      .post(
+        "http://192.168.106.71:5000/api/transactions/approvependingrequisition",
+        {
+          child_transaction_number: child_transaction_number,
+          entry_date: entry_date,
+          pickup_date: pickup_date,
+          retailer: retailer,
+          description: description,
+          items_qty: items_list,
+        }
+      )
+      .then((res) => {
+        navigation.navigate("TransactionsScreen");
+      });
+  };
+
+  const Reject = (e) => {
+    axios
+      .post(
+        "http://192.168.106.71:5000/api/transactions/rejectpendingrequisition",
+        {
+          child_transaction_number: child_transaction_number,
+        }
+      )
+      .then((res) => {
+        navigation.navigate("TransactionsScreen");
+      });
+  };
 
   return (
     <Provider>
@@ -51,6 +93,7 @@ const PendingRequisition = () => {
             <Input
               placeholder="Entry Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
+              value={entry_date}
             />
           </View>
 
@@ -58,14 +101,15 @@ const PendingRequisition = () => {
             <Input
               placeholder="Pickup Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
+              value={pickup_date}
             />
           </View>
         </View>
         <View style={styles.layout3}>
-          <Input placeholder="Retailer" />
+          <Input placeholder="Retailer" value={retailer} />
         </View>
         <View style={styles.layout4}>
-          <Input placeholder="Description" />
+          <Input placeholder="Description" value={description} />
         </View>
         <View style={styles.layout6}>
           <DataTable>
@@ -90,10 +134,18 @@ const PendingRequisition = () => {
           </DataTable>
         </View>
         <View style={styles.layout7}>
-          <Button mode="contained" style={styles.layout7Button}>
+          <Button
+            mode="contained"
+            style={styles.layout7Button}
+            onPress={(e) => Approve(e)}
+          >
             Approve
           </Button>
-          <Button mode="contained" style={styles.layout7Button}>
+          <Button
+            mode="contained"
+            style={styles.layout7Button}
+            onPress={(e) => Reject(e)}
+          >
             Reject
           </Button>
         </View>

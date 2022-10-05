@@ -59,6 +59,21 @@ const RequisitionEntry = () => {
       .catch((err) => alert("error"));
   };
 
+  const save = (e) => {
+    axios
+      .post("http://192.168.106.71:5000/api/transactions/newsavedrequisition", {
+        entry_date: entry_date,
+        pickup_date: pickup_date,
+        retailer: retailer,
+        description: description,
+        items_qty: items_list,
+      })
+      .then((res) => {
+        navigation.navigate("TransactionsScreen");
+      })
+      .catch((err) => alert("error"));
+  };
+
   return (
     <Provider>
       <View style={styles.body}>

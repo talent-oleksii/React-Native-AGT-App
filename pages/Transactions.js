@@ -17,7 +17,7 @@ const Transactions = () => {
   const navigation = useNavigation();
   const status_icon = {
     pending: require("../assets/pending_icon.png"),
-    save: require("../assets/saved_icon.png"),
+    saved: require("../assets/saved_icon.png"),
     open: require("../assets/open_icon.png"),
     return: require("../assets/return_icon.png"),
   };
