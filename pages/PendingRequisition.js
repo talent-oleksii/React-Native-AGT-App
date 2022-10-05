@@ -1,49 +1,33 @@
 import * as React from "react";
 import { Paragraph, Dialog, Portal, Provider } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, AsyncStorage } from "react-native";
 import { TextInput, Button, DataTable } from "react-native-paper";
 import { Input, Text } from "react-native-elements";
 import ThemedListItem from "react-native-elements/dist/list/ListItem";
 import axios from "axios";
 
-const RequisitionEntry = () => {
-  const [visible, setVisible] = React.useState(false);
-  const [add_item_name, setAddItemName] = React.useState("");
-  const [add_item_quantity, setAddItemQuantity] = React.useState("");
-  const [refresh, setFresh] = React.useState(false);
+const PendingRequisition = () => {
   const [entry_date, setEntryDate] = React.useState("");
   const [pickup_date, setPickupDate] = React.useState("");
   const [retailer, setRetailer] = React.useState("");
   const [description, setDescription] = React.useState("");
-
-  const showDialog = () => setVisible(true);
-  const hideDialog = () => setVisible(false);
-
   const [items_list, setItem_list] = React.useState([]);
 
-  const delete_item = (index) => {
-    let items = [...items_list];
-    items[index].visible = false;
-    setItem_list(items);
-  };
-
-  const add_item = (itemName, itemQty, e) => {
-    // let id = items_list.length + 1;
-    let name = itemName;
-    let qty = itemQty;
-    let visible = true;
-    let items = items_list.concat({ name, qty, visible });
-    console.log(items);
-    setItem_list(items);
-    hideDialog();
-  };
-
-  const submit = (e) => {
-    axios.post(
-      "http://192.168.106.71:5000/api/transactions/newpendingrequisition",
-      {}
+  React.useEffect(() => {
+    var child_transaction_number;
+    AsyncStorage.multiGet(["child_transaction_number", "email"]).then(
+      (data) => {
+        // console.log(data);
+        child_transaction_number = data[0][1];
+        axios
+          .get(
+            "http://192.168.196.71:5000/api/transactions/getpendingrequisition?id=" +
+              child_transaction_number
+          )
+          .then((res) => {});
+      }
     );
-  };
+  });
 
   return (
     <Provider>
@@ -55,7 +39,7 @@ const RequisitionEntry = () => {
             onPress={() => console.log("Pressed")}
             style={styles.headerButton}
           />
-          <Text style={styles.headerText}>REQUISITION ENTRY</Text>
+          <Text style={styles.headerText}>PENDING{"\n"}REQUISITION</Text>
           <TextInput
             style={styles.searchInput}
             label="Requisition Number"
@@ -77,17 +61,11 @@ const RequisitionEntry = () => {
             />
           </View>
         </View>
-        <View style={styles.layout2}>
-          <Text style={styles.statusText}>Status</Text>
-        </View>
         <View style={styles.layout3}>
           <Input placeholder="Retailer" />
         </View>
         <View style={styles.layout4}>
           <Input placeholder="Description" />
-        </View>
-        <View style={styles.layout5}>
-          <Text style={styles.requiredText}>Part Required</Text>
         </View>
         <View style={styles.layout6}>
           <DataTable>
@@ -96,7 +74,6 @@ const RequisitionEntry = () => {
               <DataTable.Title numeric style={{ marginHorizontal: 25 }}>
                 QTY
               </DataTable.Title>
-              <DataTable.Title onPress={showDialog}>New</DataTable.Title>
             </DataTable.Header>
             {items_list.map((item, index) => {
               return (
@@ -106,9 +83,6 @@ const RequisitionEntry = () => {
                     <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
                       {item.qty}
                     </DataTable.Cell>
-                    <DataTable.Cell onPress={(e) => delete_item(index)}>
-                      X
-                    </DataTable.Cell>
                   </DataTable.Row>
                 )
               );
@@ -117,50 +91,18 @@ const RequisitionEntry = () => {
         </View>
         <View style={styles.layout7}>
           <Button mode="contained" style={styles.layout7Button}>
-            SAVE
-          </Button>
-          <Button
-            mode="contained"
-            style={styles.layout7Button}
-            onPress={(e) => submit(e)}
-          >
-            SUBMIT
+            Approve
           </Button>
           <Button mode="contained" style={styles.layout7Button}>
-            CANCEL
+            Reject
           </Button>
         </View>
-        <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog}>
-            <Dialog.Title>Add Item</Dialog.Title>
-            <Dialog.Content>
-              <Input
-                placeholder="Item Name"
-                onChangeText={(newItemName) => setAddItemName(newItemName)}
-              ></Input>
-              <Input
-                placeholder="Quantity"
-                onChangeText={(newItemQuantity) =>
-                  setAddItemQuantity(newItemQuantity)
-                }
-              ></Input>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button
-                onPress={(e) => add_item(add_item_name, add_item_quantity, e)}
-              >
-                Add
-              </Button>
-              <Button onPress={hideDialog}>Cancel</Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
       </View>
     </Provider>
   );
 };
 
-export default RequisitionEntry;
+export default PendingRequisition;
 
 const styles = StyleSheet.create({
   body: {
@@ -181,8 +123,8 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   headerText: {
-    marginTop: 35,
-    marginLeft: 0,
+    marginTop: 25,
+    marginLeft: 10,
     marginRight: 0,
 
     color: "black",
@@ -190,7 +132,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     margin: 15,
-    marginLeft: 5,
+    marginLeft: 65,
     width: 150,
     fontSize: 10,
   },
@@ -253,12 +195,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     bottom: 20,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
   },
   layout7Button: {
-    minWidth: 120,
-    width: 100,
+    // minWidth: 120,
+    width: 150,
     margin: 5,
   },
 });

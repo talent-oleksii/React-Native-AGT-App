@@ -5,18 +5,13 @@ import axios from "axios";
 
 const Items = () => {
   const [items_list, setItemsList] = useState([]);
-  // useEffect(() => {
-  //   items_list = itemslist;
-  // }, [itemslist]);
-  
+
   useEffect(() => {
     axios
       .get("http://192.168.106.71:5000/api/items/getitems")
       .then((res) => {
         console.log(res.data);
-        // items_list = res.data;
         setItemsList(res.data);
-        // console.log(items_list)
       })
       .catch((err) => {
         console.log(err);
@@ -44,6 +39,7 @@ const Items = () => {
         {items_list.map((item, index) => {
           return (
             <List.Item
+              key={index}
               style={styles.listItem}
               title={item.name}
               description={item.description}
