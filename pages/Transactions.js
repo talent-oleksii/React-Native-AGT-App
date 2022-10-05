@@ -26,14 +26,12 @@ const Transactions = () => {
   const [viewMode, setViewMode] = useState("ALL");
 
   const moreDetail = (child_transaction_number, transaction_status, e) => {
+    AsyncStorage.setItem("child_transaction_number", child_transaction_number);
     if (transaction_status == "pending") {
-      AsyncStorage.setItem(
-        "child_transaction_number",
-        child_transaction_number
-      );
-      console.log(child_transaction_number);
       navigation.navigate("PendingRequisitionScreen");
     } else if (transaction_status == "saved") {
+    } else if (transaction_status == "open") {
+      navigation.navigate("WarehouseShipmentReceivalScreen");
     }
   };
 

@@ -4,12 +4,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./Login";
 import Signup from "./Signup";
 import DashboardScreen from "./DashboardScreen";
-import ItemsScreen from './ItemsScreen';
+import ItemsScreen from "./ItemsScreen";
 import TransactionsScreen from "./TransactionsScreen";
 import RetailerReceivalScreen from "./RetailerReceivalScreen";
 import RequisitionEntryScreen from "./RequisitionEntryScreen";
 import RetailerDataScreen from "./RetailerDataScreen";
 import PendingRequisitionScreen from "./PendingRequisitiongScreen";
+import WarehouseShipmentReceivalScreen from "./WarehouseShipmentReceivalScreen";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -29,11 +30,30 @@ const MainNavigator = () => {
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="DashboardScreen" component={DashboardScreen} />
         <Stack.Screen name="ItemsScreen" component={ItemsScreen} />
-        <Stack.Screen name="TransactionsScreen" component={TransactionsScreen} />
-        <Stack.Screen name="RetailerReceivalScreen" component={RetailerReceivalScreen} />
-        <Stack.Screen name="Requisition Entry Screen" component={RequisitionEntryScreen} />
-        <Stack.Screen name="RetailerDataScreen" component={RetailerDataScreen} />
-        <Stack.Screen name="PendingRequisitionScreen" component={PendingRequisitionScreen} />
+        <Stack.Screen
+          name="TransactionsScreen"
+          component={TransactionsScreen}
+        />
+        <Stack.Screen
+          name="RetailerReceivalScreen"
+          component={RetailerReceivalScreen}
+        />
+        <Stack.Screen
+          name="Requisition Entry Screen"
+          component={RequisitionEntryScreen}
+        />
+        <Stack.Screen
+          name="RetailerDataScreen"
+          component={RetailerDataScreen}
+        />
+        <Stack.Screen
+          name="PendingRequisitionScreen"
+          component={PendingRequisitionScreen}
+        />
+        <Stack.Screen
+          name="WarehouseShipmentReceivalScreen"
+          component={WarehouseShipmentReceivalScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
