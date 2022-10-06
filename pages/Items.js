@@ -5,6 +5,7 @@ import axios from "axios";
 
 const Items = () => {
   const [items_list, setItemsList] = useState([]);
+  const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
     axios
@@ -33,27 +34,33 @@ const Items = () => {
           label="search"
           mode="outlined"
           right={<TextInput.Icon icon="magnify" />}
+          onChangeText={(newText) => {
+            setFilterText(newText);
+          }}
         />
       </View>
       <View style={styles.container}>
         {items_list.map((item, index) => {
           return (
-            <List.Item
-              key={index}
-              style={styles.listItem}
-              title={item.name}
-              description={item.description}
-              right={(props) => (
-                <Text style={styles.itemQuantityText}>{item.quantity}</Text>
-              )}
-            />
+            (item.name.toLowerCase().includes(filterText.toLocaleLowerCase()) ||
+              item.description
+                .toLowerCase()
+                .includes(filterText.toLocaleLowerCase()) ||
+              item.quantity
+                .toLowerCase()
+                .includes(filterText.toLocaleLowerCase())) && (
+              <List.Item
+                key={index}
+                style={styles.listItem}
+                title={item.name}
+                description={item.description}
+                right={(props) => (
+                  <Text style={styles.itemQuantityText}>{item.quantity}</Text>
+                )}
+              />
+            )
           );
         })}
-      </View>
-      <View style={styles.footer}>
-        <Button mode="contained" style={styles.addButton}>
-          Read more
-        </Button>
       </View>
     </View>
   );
