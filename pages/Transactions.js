@@ -1,13 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, AsyncStorage } from "react-native";
-import {
-  TextInput,
-  Button,
-  Text,
-  Divider,
-  List,
-  DataTable,
-} from "react-native-paper";
+import { TextInput, Button, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -24,7 +17,7 @@ const Transactions = () => {
 
   const [transaction_list, setTransactionList] = useState([]);
   const [viewMode, setViewMode] = useState("ALL");
-  const [refresh, setRefresh] = useState(false);
+  const [filterText, setFilterText] = useState("");
 
   const moreDetail = (child_transaction_number, transaction_status, e) => {
     AsyncStorage.setItem("child_transaction_number", child_transaction_number);
@@ -51,7 +44,6 @@ const Transactions = () => {
 
   useEffect(() => {
     navigation.addListener("focus", () => {
-      console.log("HHHHHHHHHH");
       axios
         .get("http://192.168.106.71:5000/api/transactions/getalltransactions")
         .then((res) => {
@@ -79,6 +71,9 @@ const Transactions = () => {
           label="search"
           mode="outlined"
           right={<TextInput.Icon icon="magnify" />}
+          onChangeText={(newText) => {
+            setFilterText(newText);
+          }}
         />
       </View>
       <View>
@@ -178,7 +173,13 @@ const Transactions = () => {
       <View style={styles.transactionList}>
         {transaction_list.map((transaction, index) => {
           return (
-            (viewMode == "ALL" || viewMode == transaction["status"]) && (
+            (viewMode == "ALL" || viewMode == transaction.status) &&
+            (transaction.retailer
+              .toLowerCase()
+              .includes(filterText.toLocaleLowerCase()) ||
+              transaction.date
+                .toLowerCase()
+                .includes(filterText.toLocaleLowerCase())) && (
               <View
                 style={styles.transactionListItem}
                 key={index}
@@ -195,11 +196,9 @@ const Transactions = () => {
                   style={{ width: 100, height: 60 }}
                 />
                 <Text style={styles.transactionText}>
-                  {transaction["retailer"]}
+                  {transaction.retailer}
                 </Text>
-                <Text style={styles.transactionText}>
-                  {transaction["date"]}
-                </Text>
+                <Text style={styles.transactionText}>{transaction.date}</Text>
               </View>
             )
           );
