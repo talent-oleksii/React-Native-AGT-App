@@ -24,12 +24,14 @@ const Transactions = () => {
 
   const [transaction_list, setTransactionList] = useState([]);
   const [viewMode, setViewMode] = useState("ALL");
+  const [refresh, setRefresh] = useState(false);
 
   const moreDetail = (child_transaction_number, transaction_status, e) => {
     AsyncStorage.setItem("child_transaction_number", child_transaction_number);
     if (transaction_status == "pending") {
       navigation.navigate("PendingRequisitionScreen");
     } else if (transaction_status == "saved") {
+      navigation.navigate("SavedRequisitionScreen");
     } else if (transaction_status == "open") {
       navigation.navigate("WarehouseShipmentReceivalScreen");
     }
@@ -46,6 +48,21 @@ const Transactions = () => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      console.log("HHHHHHHHHH");
+      axios
+        .get("http://192.168.106.71:5000/api/transactions/getalltransactions")
+        .then((res) => {
+          console.log(res.data);
+          setTransactionList(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.body}>

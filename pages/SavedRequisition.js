@@ -1,79 +1,75 @@
 import * as React from "react";
-import { Dialog, Portal, Provider } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
-import { Button, DataTable } from "react-native-paper";
+import { Paragraph, Dialog, Portal, Provider } from "react-native-paper";
+import { View, StyleSheet, AsyncStorage } from "react-native";
+import { TextInput, Button, DataTable } from "react-native-paper";
 import { Input, Text } from "react-native-elements";
+import ThemedListItem from "react-native-elements/dist/list/ListItem";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
-const RequisitionEntry = () => {
+const SavedRequisition = () => {
   const navigation = useNavigation();
 
-  const [visible, setVisible] = React.useState(false);
-  const [add_item_name, setAddItemName] = React.useState("");
-  const [add_item_quantity, setAddItemQuantity] = React.useState("");
   const [entry_date, setEntryDate] = React.useState("");
   const [pickup_date, setPickupDate] = React.useState("");
   const [retailer, setRetailer] = React.useState("");
   const [description, setDescription] = React.useState("");
-
-  const showDialog = () => setVisible(true);
-  const hideDialog = () => setVisible(false);
-
   const [items_list, setItem_list] = React.useState([]);
 
-  const delete_item = (index) => {
-    let items = [...items_list];
-    items[index].visible = false;
-    setItem_list(items);
-  };
+  var child_transaction_number;
+  React.useEffect(() => {
+    AsyncStorage.multiGet(["child_transaction_number", "email"]).then(
+      (data) => {
+        child_transaction_number = data[0][1];
+        axios
+          .post(
+            "http://192.168.106.71:5000/api/transactions/getsavedrequisition",
+            {
+              child_transaction_number: child_transaction_number,
+            }
+          )
+          .then((res) => {
+            setEntryDate(res.data.entry_date);
+            setPickupDate(res.data.pickup_date);
+            setRetailer(res.data.retailer);
+            setDescription(res.data.description);
+            setItem_list(res.data.items_qty);
+          })
+          .catch((err) => console.log(err));
+      }
+    );
+  }, []);
 
-  const add_item = (itemName, itemQty, e) => {
-    let name = itemName;
-    let qty = itemQty;
-    let visible = true;
-    let items = items_list.concat({ name, qty, visible });
-    console.log(items);
-    setItem_list(items);
-    hideDialog();
-  };
+  // const Approve = (e) => {
+  //   axios
+  //     .post(
+  //       "http://192.168.106.71:5000/api/transactions/approvependingrequisition",
+  //       {
+  //         child_transaction_number: child_transaction_number,
+  //         entry_date: entry_date,
+  //         pickup_date: pickup_date,
+  //         retailer: retailer,
+  //         description: description,
+  //         items_qty: items_list,
+  //       }
+  //     )
+  //     .then((res) => {
+  //       navigation.navigate("TransactionsScreen");
+  //     });
+  // };
 
-  const submit = (e) => {
-    axios
-      .post(
-        "http://192.168.106.71:5000/api/transactions/newpendingrequisition",
-        {
-          entry_date: entry_date,
-          pickup_date: pickup_date,
-          retailer: retailer,
-          description: description,
-          items_qty: items_list,
-        }
-      )
-      .then((res) => {
-        navigation.navigate("TransactionsScreen");
-      })
-      .catch((err) => alert("error"));
-  };
-
-  const save = (e) => {
-    axios
-      .post("http://192.168.106.71:5000/api/transactions/newsavedrequisition", {
-        entry_date: entry_date,
-        pickup_date: pickup_date,
-        retailer: retailer,
-        description: description,
-        items_qty: items_list,
-      })
-      .then((res) => {
-        navigation.navigate("TransactionsScreen");
-      })
-      .catch((err) => alert("error"));
-  };
-
-  const cancel = (e) => {
-    navigation.navigate("TransactionsScreen");
-  };
+  // const Reject = (e) => {
+  //   axios
+  //     .post(
+  //       "http://192.168.106.71:5000/api/transactions/rejectpendingrequisition",
+  //       {
+  //         child_transaction_number: child_transaction_number,
+  //       }
+  //     )
+  //     .then((res) => {
+  //       navigation.navigate("TransactionsScreen");
+  //     });
+  // };
 
   return (
     <Provider>
@@ -85,14 +81,19 @@ const RequisitionEntry = () => {
             onPress={() => console.log("Pressed")}
             style={styles.headerButton}
           />
-          <Text style={styles.headerText}>REQUISITION ENTRY</Text>
+          <Text style={styles.headerText}>SAVED REQUISITION</Text>
+          {/* <TextInput
+            style={styles.searchInput}
+            label="Requisition Number"
+            mode="outlined"
+          /> */}
         </View>
         <View style={styles.layout1}>
           <View style={styles.datePicker}>
             <Input
               placeholder="Entry Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
-              onChangeText={(newText) => setEntryDate(newText)}
+              value={entry_date}
             />
           </View>
 
@@ -100,21 +101,15 @@ const RequisitionEntry = () => {
             <Input
               placeholder="Pickup Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
-              onChangeText={(newText) => setPickupDate(newText)}
+              value={pickup_date}
             />
           </View>
         </View>
         <View style={styles.layout3}>
-          <Input
-            placeholder="Retailer"
-            onChangeText={(newText) => setRetailer(newText)}
-          />
+          <Input placeholder="Retailer" value={retailer} />
         </View>
         <View style={styles.layout4}>
-          <Input
-            placeholder="Description"
-            onChangeText={(newText) => setDescription(newText)}
-          />
+          <Input placeholder="Description" value={description} />
         </View>
         <View style={styles.layout6}>
           <DataTable>
@@ -123,7 +118,6 @@ const RequisitionEntry = () => {
               <DataTable.Title numeric style={{ marginHorizontal: 25 }}>
                 QTY
               </DataTable.Title>
-              <DataTable.Title onPress={showDialog}>New</DataTable.Title>
             </DataTable.Header>
             {items_list.map((item, index) => {
               return (
@@ -133,69 +127,34 @@ const RequisitionEntry = () => {
                     <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
                       {item.qty}
                     </DataTable.Cell>
-                    <DataTable.Cell onPress={(e) => delete_item(index)}>
-                      X
-                    </DataTable.Cell>
                   </DataTable.Row>
                 )
               );
             })}
           </DataTable>
         </View>
-        <View style={styles.layout7}>
+        {/* <View style={styles.layout7}>
           <Button
             mode="contained"
             style={styles.layout7Button}
-            onPress={(e) => save(e)}
+            onPress={(e) => Approve(e)}
           >
-            SAVE
+            Approve
           </Button>
           <Button
             mode="contained"
             style={styles.layout7Button}
-            onPress={(e) => submit(e)}
+            onPress={(e) => Reject(e)}
           >
-            SUBMIT
+            Reject
           </Button>
-          <Button
-            mode="contained"
-            style={styles.layout7Button}
-            onPress={(e) => cancel(e)}
-          >
-            CANCEL
-          </Button>
-        </View>
-        <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog}>
-            <Dialog.Title>Add Item</Dialog.Title>
-            <Dialog.Content>
-              <Input
-                placeholder="Item Name"
-                onChangeText={(newItemName) => setAddItemName(newItemName)}
-              />
-              <Input
-                placeholder="Quantity"
-                onChangeText={(newItemQuantity) =>
-                  setAddItemQuantity(newItemQuantity)
-                }
-              />
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button
-                onPress={(e) => add_item(add_item_name, add_item_quantity, e)}
-              >
-                Add
-              </Button>
-              <Button onPress={hideDialog}>Cancel</Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
+        </View> */}
       </View>
     </Provider>
   );
 };
 
-export default RequisitionEntry;
+export default SavedRequisition;
 
 const styles = StyleSheet.create({
   body: {
@@ -217,7 +176,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     marginTop: 35,
-    marginLeft: 0,
+    marginLeft: 10,
     marginRight: 0,
 
     color: "black",
@@ -225,7 +184,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     margin: 15,
-    marginLeft: 5,
+    marginLeft: 65,
     width: 150,
     fontSize: 10,
   },
@@ -288,12 +247,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     bottom: 20,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
   },
   layout7Button: {
-    minWidth: 120,
-    width: 100,
+    // minWidth: 120,
+    width: 150,
     margin: 5,
   },
 });
