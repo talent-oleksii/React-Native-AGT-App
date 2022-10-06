@@ -19,26 +19,25 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const login = () => {
-    // axios
-    //   .post("http://192.168.106.71:5000/api/users/login", {
-    //     password: password,
-    //     email: email,
-    //   })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     AsyncStorage.multiSet([
-    //       ["email", res.data['email']],
-    //       ["password", res.data['password']],
-    //       ["username", res.data['username']],
-    //     ])
+    axios
+      .post("http://192.168.106.71:5000/api/users/login", {
+        password: password,
+        email: email,
+      })
+      .then((res) => {
+        console.log(res.data);
+        AsyncStorage.multiSet([
+          ["email", res.data["email"]],
+          ["password", res.data["password"]],
+          ["username", res.data["username"]],
+        ]);
 
-    //     alert("Welcome " + res.data['username'] + "!");
-    //     navigation.navigate("DashboardScreen");
-    //   })
-    //   .catch((err) => {
-    //     alert("Error");
-    //   });
-    navigation.navigate("DashboardScreen");
+        alert("Welcome " + res.data["username"] + "!");
+        navigation.navigate("DashboardScreen");
+      })
+      .catch((err) => {
+        alert("Error");
+      });
   };
 
   const signup = () => {
