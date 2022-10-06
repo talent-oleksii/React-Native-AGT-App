@@ -1,12 +1,12 @@
-import { Component, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Image } from "react-native-elements";
 import { List, TextInput, Button } from "react-native-paper";
-import AwesomeIcon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
 
 const RetailerData = () => {
   const [retailer_list, setRetailerList] = useState([]);
+  const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
     axios
@@ -35,22 +35,32 @@ const RetailerData = () => {
           label="search"
           mode="outlined"
           right={<TextInput.Icon icon="magnify" />}
+          onChangeText={(newText) => {
+            setFilterText(newText);
+          }}
         />
       </View>
       <View style={styles.container}>
         {retailer_list.map((retailer, index) => {
           return (
-            <List.Item
-              style={styles.listItem}
-              title={retailer.name}
-              description={retailer.description}
-              left={(props) => (
-                <Image
-                  source={require("./assets/retailer-avatar.png")}
-                  style={{ width: 50, height: 50 }}
-                />
-              )}
-            />
+            (retailer.name
+              .toLowerCase()
+              .includes(filterText.toLocaleLowerCase()) ||
+              retailer.description
+                .toLowerCase()
+                .includes(filterText.toLocaleLowerCase())) && (
+              <List.Item
+                style={styles.listItem}
+                title={retailer.name}
+                description={retailer.description}
+                left={(props) => (
+                  <Image
+                    source={require("./assets/retailer-avatar.png")}
+                    style={{ width: 50, height: 50 }}
+                  />
+                )}
+              />
+            )
           );
         })}
       </View>
