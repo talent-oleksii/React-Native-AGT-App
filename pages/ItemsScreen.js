@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { AsyncStorage } from "react-native";
 import { List, Divider } from "react-native-paper";
 import {
   Button,
@@ -41,7 +42,14 @@ const ItemsScreen = () => {
       setDrawerPosition("left");
     }
   };
-
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    AsyncStorage.multiGet(["email", "username"]).then((data) => {
+      setEmail(data[0][1]);
+      setUsername(data[1][1]);
+    });
+  }, []);
   const navigationView = () => (
     <View style={styles.container}>
       <View style={styles.drawerHeader}>
@@ -52,8 +60,8 @@ const ItemsScreen = () => {
           />
         </View>
         <View>
-          <Text style={styles.drawerUsername}>Ryuusei Tei</Text>
-          <Text style={styles.drawerUserword}>Noting but the BEST</Text>
+          <Text style={styles.drawerUsername}>{username}</Text>
+          <Text style={styles.drawerUserword}>{email}</Text>
         </View>
       </View>
       <View style={styles.navigationContainer}>

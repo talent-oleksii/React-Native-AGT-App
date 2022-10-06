@@ -1,5 +1,11 @@
-import React, { useRef, useState } from "react";
-import { DrawerLayoutAndroid, Text, StyleSheet, View } from "react-native";
+import React, { useRef, useState, useEffect } from "react";
+import {
+  DrawerLayoutAndroid,
+  Text,
+  StyleSheet,
+  View,
+  AsyncStorage,
+} from "react-native";
 import { List, Divider } from "react-native-paper";
 import { Image } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +17,14 @@ const DashboardScreen = () => {
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState("left");
 
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    AsyncStorage.multiGet(["email", "username"]).then((data) => {
+      setEmail(data[0][1]);
+      setUsername(data[1][1]);
+    });
+  }, []);
   const navigationView = () => (
     <View style={styles.container}>
       <View style={styles.drawerHeader}>
@@ -21,8 +35,8 @@ const DashboardScreen = () => {
           />
         </View>
         <View>
-          <Text style={styles.drawerUsername}>User Name</Text>
-          <Text style={styles.drawerUserword}>Noting but the BEST</Text>
+          <Text style={styles.drawerUsername}>{username}</Text>
+          <Text style={styles.drawerUserword}>{email}</Text>
         </View>
       </View>
       <View style={styles.navigationContainer}>

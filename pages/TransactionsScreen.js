@@ -1,6 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+
 import { List, Divider } from "react-native-paper";
-import { DrawerLayoutAndroid, Text, StyleSheet, View } from "react-native";
+import {
+  DrawerLayoutAndroid,
+  Text,
+  StyleSheet,
+  View,
+  AsyncStorage,
+} from "react-native";
 import { DefaultTheme, useNavigation } from "@react-navigation/native";
 import { Image } from "react-native-elements";
 
@@ -18,7 +25,14 @@ const TransactionsScreen = () => {
   const navigation = useNavigation();
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState("left");
-
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    AsyncStorage.multiGet(["email", "username"]).then((data) => {
+      setEmail(data[0][1]);
+      setUsername(data[1][1]);
+    });
+  }, []);
   const navigationView = () => (
     <View style={styles.container}>
       <View style={styles.drawerHeader}>
@@ -29,8 +43,8 @@ const TransactionsScreen = () => {
           />
         </View>
         <View>
-          <Text style={styles.drawerUsername}>Ryuusei Tei</Text>
-          <Text style={styles.drawerUserword}>Noting but the BEST</Text>
+          <Text style={styles.drawerUsername}>{username}</Text>
+          <Text style={styles.drawerUserword}>{email}</Text>
         </View>
       </View>
       <View style={styles.navigationContainer}>

@@ -3,26 +3,22 @@ import { StyleSheet, Text, View, AsyncStorage } from "react-native";
 
 import { Image } from "react-native-elements";
 import { Button } from "react-native-paper";
-import {
-  DefaultTheme,
-  useNavigation,
-} from "@react-navigation/native";
+import { DefaultTheme, useNavigation } from "@react-navigation/native";
 
 const Dashboard = () => {
   const navigation = useNavigation();
 
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+
   useEffect(() => {
-    AsyncStorage.multiGet(['email', 'username']).then((data) => {
+    AsyncStorage.multiGet(["email", "username"]).then((data) => {
       setEmail(data[0][1]);
       setUsername(data[1][1]);
     });
   }, []);
-  
 
-    return (
+  return (
     <View style={styles.body}>
       <View
         style={{
@@ -106,8 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEEEEE",
     paddingBottom: 50,
   },
-  container: {
-  },
+  container: {},
   items: {
     width: 150,
     margin: 15,
