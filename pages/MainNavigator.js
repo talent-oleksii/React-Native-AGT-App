@@ -12,6 +12,7 @@ import RetailerDataScreen from "./RetailerDataScreen";
 import PendingRequisitionScreen from "./PendingRequisitiongScreen";
 import SavedRequisitionScreen from "./SavedRequisitionScreen";
 import WarehouseShipmentReceivalScreen from "./WarehouseShipmentReceivalScreen";
+import RetailerSelectScreen from "./RetailerSelectScreen";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -58,6 +59,10 @@ const MainNavigator = () => {
         <Stack.Screen
           name="SavedRequisitionScreen"
           component={SavedRequisitionScreen}
+        />
+        <Stack.Screen
+          name="RetailerSelectScreen"
+          component={RetailerSelectScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { Image } from "react-native-elements";
 import { List, TextInput, Button } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
-const RetailerData = () => {
+const RetailerSelect = () => {
+  const navigation = useNavigation();
+
   const [retailer_list, setRetailerList] = useState([]);
   const [filterText, setFilterText] = useState("");
+  const [buttonEnable, setButtonEnable] = useState(false);
+  const [selectedRetailer, setSelectedRetailer] = useState("");
 
   useEffect(() => {
     axios
       .get("http://192.168.106.71:5000/api/retailer/getretailer")
       .then((res) => {
-        console.log(res.data);
         setRetailerList(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        alert(err);
       });
   }, []);
 
@@ -29,7 +33,7 @@ const RetailerData = () => {
           onPress={() => console.log("Pressed")}
           style={styles.headerButton}
         />
-        <Text style={styles.headerText}> Reatiler Data </Text>
+        <Text style={styles.headerText}>Select Reatiler</Text>
         <TextInput
           style={styles.searchInput}
           label="search"
@@ -50,6 +54,7 @@ const RetailerData = () => {
                 .toLowerCase()
                 .includes(filterText.toLocaleLowerCase())) && (
               <List.Item
+                key={index}
                 style={styles.listItem}
                 title={retailer.name}
                 description={retailer.description}
@@ -59,16 +64,40 @@ const RetailerData = () => {
                     style={{ width: 50, height: 50 }}
                   />
                 )}
+                onPress={() => {
+                  setSelectedRetailer(retailer.name);
+                  setButtonEnable(true);
+                }}
               />
             )
           );
         })}
       </View>
+      <View style={styles.footer}>
+        {buttonEnable && (
+          <Button
+            mode="contained"
+            style={styles.addButton}
+            onPress={() => {
+              navigation.navigate("Requisition Entry Screen");
+              AsyncStorage.setItem("retailer", selectedRetailer);
+            }}
+          >
+            <Text style={{ color: "#FF8E00" }}>{selectedRetailer}</Text>{" "}
+            Selected
+          </Button>
+        )}
+        {buttonEnable == false && (
+          <Button style={styles.addButton} disabled>
+            Select Retailer
+          </Button>
+        )}
+      </View>
     </View>
   );
 };
 
-export default RetailerData;
+export default RetailerSelect;
 
 const styles = StyleSheet.create({
   body: {
@@ -113,8 +142,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#003F7D",
-    width: "30%",
-    left: "35%",
+    width: "70%",
+    left: "15%",
     marginHorizontal: "auto",
   },
   listItem: {

@@ -210,7 +210,7 @@ const Transactions = () => {
           mode="contained"
           buttonColor="green"
           onPress={() => {
-            navigation.navigate("Requisition Entry Screen");
+            navigation.navigate("RetailerSelectScreen");
           }}
         >
           <Icon name="plus" color={"white"}></Icon>

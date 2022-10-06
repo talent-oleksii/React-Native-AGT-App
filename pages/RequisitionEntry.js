@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Dialog, Portal, Provider } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, AsyncStorage } from "react-native";
 import { Button, DataTable } from "react-native-paper";
 import { Input, Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
@@ -16,11 +16,10 @@ const RequisitionEntry = () => {
   const [pickup_date, setPickupDate] = React.useState("");
   const [retailer, setRetailer] = React.useState("");
   const [description, setDescription] = React.useState("");
+  const [items_list, setItem_list] = React.useState([]);
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
-
-  const [items_list, setItem_list] = React.useState([]);
 
   const delete_item = (index) => {
     let items = [...items_list];
@@ -37,6 +36,13 @@ const RequisitionEntry = () => {
     setItem_list(items);
     hideDialog();
   };
+
+  React.useEffect(() => {
+    AsyncStorage.multiGet(["retailer", "username"]).then((data) => {
+      setRetailer(data[0][1]);
+      setUsername(data[1][1]);
+    });
+  }, []);
 
   const submit = (e) => {
     axios
@@ -105,10 +111,7 @@ const RequisitionEntry = () => {
           </View>
         </View>
         <View style={styles.layout3}>
-          <Input
-            placeholder="Retailer"
-            onChangeText={(newText) => setRetailer(newText)}
-          />
+          <Text style={styles.retailerText}>Reatiler : {retailer}</Text>
         </View>
         <View style={styles.layout4}>
           <Input
@@ -265,11 +268,10 @@ const styles = StyleSheet.create({
     color: "blue",
   },
   layout3: {
-    marginHorizontal: 10,
-    marginTop: 20,
-    width: "50%",
-    justifyContent: "center",
-    alignItems: "center",
+    marginHorizontal: 20,
+  },
+  retailerText: {
+    fontSize: 20,
   },
   layout4: {
     marginHorizontal: 10,
