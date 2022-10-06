@@ -41,34 +41,42 @@ const PendingRequisition = () => {
   }, []);
 
   const Approve = (e) => {
-    axios
-      .post(
-        "http://192.168.106.71:5000/api/transactions/approvependingrequisition",
-        {
-          child_transaction_number: child_transaction_number,
-          entry_date: entry_date,
-          pickup_date: pickup_date,
-          retailer: retailer,
-          description: description,
-          items_qty: items_list,
-        }
-      )
-      .then((res) => {
-        navigation.navigate("TransactionsScreen");
-      });
+    AsyncStorage.multiGet(["child_transaction_number", "email"]).then(
+      (data) => {
+        axios
+          .post(
+            "http://192.168.106.71:5000/api/transactions/approvependingrequisition",
+            {
+              child_transaction_number: data[0][1],
+              entry_date: entry_date,
+              pickup_date: pickup_date,
+              retailer: retailer,
+              description: description,
+              items_qty: items_list,
+            }
+          )
+          .then((res) => {
+            navigation.navigate("TransactionsScreen");
+          });
+      }
+    );
   };
 
   const Reject = (e) => {
-    axios
-      .post(
-        "http://192.168.106.71:5000/api/transactions/rejectpendingrequisition",
-        {
-          child_transaction_number: child_transaction_number,
-        }
-      )
-      .then((res) => {
-        navigation.navigate("TransactionsScreen");
-      });
+    AsyncStorage.multiGet(["child_transaction_number", "email"]).then(
+      (data) => {
+        axios
+          .post(
+            "http://192.168.106.71:5000/api/transactions/rejectpendingrequisition",
+            {
+              child_transaction_number: data[0][1],
+            }
+          )
+          .then((res) => {
+            navigation.navigate("TransactionsScreen");
+          });
+      }
+    );
   };
 
   return (
