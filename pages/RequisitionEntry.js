@@ -17,21 +17,19 @@ const RequisitionEntry = () => {
   const [retailer, setRetailer] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [items_list, setItem_list] = React.useState([]);
+  const [username, setUsername] = React.useState("");
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
-
   const delete_item = (index) => {
     let items = [...items_list];
-    items[index].visible = false;
+    items.splice(index, 1);
     setItem_list(items);
   };
-
   const add_item = (itemName, itemQty, e) => {
     let name = itemName;
     let qty = itemQty;
-    let visible = true;
-    let items = items_list.concat({ name, qty, visible });
+    let items = items_list.concat({ name, qty });
     console.log(items);
     setItem_list(items);
     hideDialog();
@@ -42,6 +40,13 @@ const RequisitionEntry = () => {
       setRetailer(data[0][1]);
       setUsername(data[1][1]);
     });
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = yyyy + "-" + mm + "-" + dd;
+    setEntryDate(today);
   }, []);
 
   const submit = (e) => {
@@ -54,6 +59,7 @@ const RequisitionEntry = () => {
           retailer: retailer,
           description: description,
           items_qty: items_list,
+          username: username,
         }
       )
       .then((res) => {
@@ -70,6 +76,7 @@ const RequisitionEntry = () => {
         retailer: retailer,
         description: description,
         items_qty: items_list,
+        username: username,
       })
       .then((res) => {
         navigation.navigate("TransactionsScreen");
@@ -98,7 +105,7 @@ const RequisitionEntry = () => {
             <Input
               placeholder="Entry Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
-              onChangeText={(newText) => setEntryDate(newText)}
+              value={entry_date}
             />
           </View>
 
@@ -130,17 +137,15 @@ const RequisitionEntry = () => {
             </DataTable.Header>
             {items_list.map((item, index) => {
               return (
-                item.visible && (
-                  <DataTable.Row key={index}>
-                    <DataTable.Cell>{item.name}</DataTable.Cell>
-                    <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
-                      {item.qty}
-                    </DataTable.Cell>
-                    <DataTable.Cell onPress={(e) => delete_item(index)}>
-                      X
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                )
+                <DataTable.Row key={index}>
+                  <DataTable.Cell>{item.name}</DataTable.Cell>
+                  <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
+                    {item.qty}
+                  </DataTable.Cell>
+                  <DataTable.Cell onPress={(e) => delete_item(index)}>
+                    X
+                  </DataTable.Cell>
+                </DataTable.Row>
               );
             })}
           </DataTable>

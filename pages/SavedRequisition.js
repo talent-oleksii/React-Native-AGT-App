@@ -15,12 +15,14 @@ const SavedRequisition = () => {
   const [retailer, setRetailer] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [items_list, setItem_list] = React.useState([]);
+  const [username, setUsername] = React.useState("");
 
   var child_transaction_number;
   React.useEffect(() => {
-    AsyncStorage.multiGet(["child_transaction_number", "email"]).then(
+    AsyncStorage.multiGet(["child_transaction_number", "username"]).then(
       (data) => {
         child_transaction_number = data[0][1];
+        setUsername(data[0][0]);
         axios
           .post(
             "http://192.168.106.71:5000/api/transactions/getsavedrequisition",
@@ -40,36 +42,58 @@ const SavedRequisition = () => {
     );
   }, []);
 
-  // const Approve = (e) => {
-  //   axios
-  //     .post(
-  //       "http://192.168.106.71:5000/api/transactions/approvependingrequisition",
-  //       {
-  //         child_transaction_number: child_transaction_number,
-  //         entry_date: entry_date,
-  //         pickup_date: pickup_date,
-  //         retailer: retailer,
-  //         description: description,
-  //         items_qty: items_list,
-  //       }
-  //     )
-  //     .then((res) => {
-  //       navigation.navigate("TransactionsScreen");
-  //     });
-  // };
+  const submit = (e) => {
+    AsyncStorage.multiGet(["child_transaction_number", "username"]).then(
+      (data) => {
+        axios
+          .post(
+            "http://192.168.106.71:5000/api/transactions/submitsavedrequisition",
+            {
+              child_transaction_number: data[0][1],
+              entry_date: entry_date,
+              pickup_date: pickup_date,
+              retailer: retailer,
+              description: description,
+              items_qty: items_list,
+              username: username,
+            }
+          )
+          .then((res) => {
+            navigation.navigate("TransactionsScreen");
+          })
+          .catch((err) => alert("error"));
+      }
+    );
+  };
 
-  // const Reject = (e) => {
-  //   axios
-  //     .post(
-  //       "http://192.168.106.71:5000/api/transactions/rejectpendingrequisition",
-  //       {
-  //         child_transaction_number: child_transaction_number,
-  //       }
-  //     )
-  //     .then((res) => {
-  //       navigation.navigate("TransactionsScreen");
-  //     });
-  // };
+  const save = (e) => {
+    AsyncStorage.multiGet(["child_transaction_number", "username"]).then(
+      (data) => {
+        child_transaction_number = data[0][1];
+        axios
+          .post(
+            "http://192.168.106.71:5000/api/transactions/updatesavedrequisition",
+            {
+              child_transaction_number: child_transaction_number,
+              entry_date: entry_date,
+              pickup_date: pickup_date,
+              retailer: retailer,
+              description: description,
+              items_qty: items_list,
+              username: username,
+            }
+          )
+          .then((res) => {
+            navigation.navigate("TransactionsScreen");
+          })
+          .catch((err) => alert("error"));
+      }
+    );
+  };
+
+  const cancel = (e) => {
+    navigation.navigate("TransactionsScreen");
+  };
 
   return (
     <Provider>
@@ -82,11 +106,6 @@ const SavedRequisition = () => {
             style={styles.headerButton}
           />
           <Text style={styles.headerText}>SAVED REQUISITION</Text>
-          {/* <TextInput
-            style={styles.searchInput}
-            label="Requisition Number"
-            mode="outlined"
-          /> */}
         </View>
         <View style={styles.layout1}>
           <View style={styles.datePicker}>
@@ -102,6 +121,7 @@ const SavedRequisition = () => {
               placeholder="Pickup Date"
               leftIcon={{ type: "font-awesome", name: "calendar" }}
               value={pickup_date}
+              onChangeText={(newText) => setPickupDate(newText)}
             />
           </View>
         </View>
@@ -109,7 +129,13 @@ const SavedRequisition = () => {
           <Input placeholder="Retailer" value={retailer} />
         </View>
         <View style={styles.layout4}>
-          <Input placeholder="Description" value={description} />
+          <Input
+            placeholder="Description"
+            value={description}
+            onChangeText={(newText) => {
+              setDescription(newText);
+            }}
+          />
         </View>
         <View style={styles.layout6}>
           <DataTable>
@@ -121,34 +147,39 @@ const SavedRequisition = () => {
             </DataTable.Header>
             {items_list.map((item, index) => {
               return (
-                item.visible && (
-                  <DataTable.Row key={index}>
-                    <DataTable.Cell>{item.name}</DataTable.Cell>
-                    <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
-                      {item.qty}
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                )
+                <DataTable.Row key={index}>
+                  <DataTable.Cell>{item.name}</DataTable.Cell>
+                  <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
+                    {item.qty}
+                  </DataTable.Cell>
+                </DataTable.Row>
               );
             })}
           </DataTable>
         </View>
-        {/* <View style={styles.layout7}>
+        <View style={styles.layout7}>
           <Button
             mode="contained"
             style={styles.layout7Button}
-            onPress={(e) => Approve(e)}
+            onPress={(e) => save(e)}
           >
-            Approve
+            SAVE
           </Button>
           <Button
             mode="contained"
             style={styles.layout7Button}
-            onPress={(e) => Reject(e)}
+            onPress={(e) => submit(e)}
           >
-            Reject
+            SUBMIT
           </Button>
-        </View> */}
+          <Button
+            mode="contained"
+            style={styles.layout7Button}
+            onPress={(e) => cancel(e)}
+          >
+            CANCEL
+          </Button>
+        </View>
       </View>
     </Provider>
   );
@@ -252,8 +283,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   layout7Button: {
-    // minWidth: 120,
-    width: 150,
+    minWidth: 120,
+    width: 100,
     margin: 5,
   },
 });
