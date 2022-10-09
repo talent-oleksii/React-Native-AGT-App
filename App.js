@@ -2,6 +2,8 @@ import { Component } from "react";
 
 import Splash from "./pages/Splash";
 import MainNavigator from "./pages/MainNavigator";
+import ReturnScreen from "./pages/ReturnScreen";
+import Return from "./pages/Return";
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,8 @@ export default class App extends Component {
     if (!this.state.timePassed) {
       return mainScreen;
     } else {
-      mainScreen = <MainNavigator />;
+      // mainScreen = <MainNavigator />;
+      mainScreen = <Return />;
     }
     return mainScreen;
   }
