@@ -41,25 +41,29 @@ const PendingRequisition = () => {
   }, []);
 
   const Approve = (e) => {
-    AsyncStorage.multiGet(["child_transaction_number", "email"]).then(
-      (data) => {
-        axios
-          .post(
-            "http://192.168.106.71:5000/api/transactions/approvependingrequisition",
-            {
-              child_transaction_number: data[0][1],
-              entry_date: entry_date,
-              pickup_date: pickup_date,
-              retailer: retailer,
-              description: description,
-              items_qty: items_list,
-            }
-          )
-          .then((res) => {
-            navigation.navigate("TransactionsScreen");
-          });
-      }
-    );
+    AsyncStorage.multiGet([
+      "child_transaction_number",
+      "email",
+      "username",
+    ]).then((data) => {
+      axios
+        .post(
+          "http://192.168.106.71:5000/api/transactions/approvependingrequisition",
+          {
+            child_transaction_number: data[0][1],
+            entry_date: entry_date,
+            pickup_date: pickup_date,
+            retailer: retailer,
+            description: description,
+            items_qty: items_list,
+            email: data[1][1],
+            username: data[2][1],
+          }
+        )
+        .then((res) => {
+          navigation.navigate("TransactionsScreen");
+        });
+    });
   };
 
   const Reject = (e) => {
@@ -129,14 +133,12 @@ const PendingRequisition = () => {
             </DataTable.Header>
             {items_list.map((item, index) => {
               return (
-                item.visible && (
-                  <DataTable.Row key={index}>
-                    <DataTable.Cell>{item.name}</DataTable.Cell>
-                    <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
-                      {item.qty}
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                )
+                <DataTable.Row key={index}>
+                  <DataTable.Cell>{item.name}</DataTable.Cell>
+                  <DataTable.Cell numeric style={{ marginHorizontal: 25 }}>
+                    {item.qty}
+                  </DataTable.Cell>
+                </DataTable.Row>
               );
             })}
           </DataTable>

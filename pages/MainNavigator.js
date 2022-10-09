@@ -13,6 +13,7 @@ import PendingRequisitionScreen from "./PendingRequisitiongScreen";
 import SavedRequisitionScreen from "./SavedRequisitionScreen";
 import WarehouseShipmentReceivalScreen from "./WarehouseShipmentReceivalScreen";
 import RetailerSelectScreen from "./RetailerSelectScreen";
+import AssignReturnScreen from "./AssignReturnScreen";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -63,6 +64,10 @@ const MainNavigator = () => {
         <Stack.Screen
           name="RetailerSelectScreen"
           component={RetailerSelectScreen}
+        />
+        <Stack.Screen
+          name="AssignReturnScreen"
+          component={AssignReturnScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -22,7 +22,6 @@ const SavedRequisition = () => {
     AsyncStorage.multiGet(["child_transaction_number", "username"]).then(
       (data) => {
         child_transaction_number = data[0][1];
-        setUsername(data[0][0]);
         axios
           .post(
             "http://192.168.106.71:5000/api/transactions/getsavedrequisition",

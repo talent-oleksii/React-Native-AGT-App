@@ -19,8 +19,15 @@ const Transactions = () => {
   const [viewMode, setViewMode] = useState("ALL");
   const [filterText, setFilterText] = useState("");
 
-  const moreDetail = (child_transaction_number, transaction_status, e) => {
-    AsyncStorage.setItem("child_transaction_number", child_transaction_number);
+  const moreDetail = async (
+    child_transaction_number,
+    transaction_status,
+    e
+  ) => {
+    await AsyncStorage.setItem(
+      "child_transaction_number",
+      child_transaction_number
+    );
     if (transaction_status == "pending") {
       navigation.navigate("PendingRequisitionScreen");
     } else if (transaction_status == "saved") {

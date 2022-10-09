@@ -1,10 +1,7 @@
 import { Component } from "react";
-import { StyleSheet } from "react-native";
 
 import Splash from "./pages/Splash";
 import MainNavigator from "./pages/MainNavigator";
-import RetailerData from "./pages/RetailerData";
-
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -22,17 +19,7 @@ export default class App extends Component {
       return mainScreen;
     } else {
       mainScreen = <MainNavigator />;
-      // mainScreen = <RetailerData />;
     }
     return mainScreen;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

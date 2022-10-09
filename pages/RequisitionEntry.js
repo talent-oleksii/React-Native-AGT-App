@@ -18,6 +18,7 @@ const RequisitionEntry = () => {
   const [description, setDescription] = React.useState("");
   const [items_list, setItem_list] = React.useState([]);
   const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
@@ -36,9 +37,10 @@ const RequisitionEntry = () => {
   };
 
   React.useEffect(() => {
-    AsyncStorage.multiGet(["retailer", "username"]).then((data) => {
+    AsyncStorage.multiGet(["retailer", "username", "email"]).then((data) => {
       setRetailer(data[0][1]);
       setUsername(data[1][1]);
+      setEmail(data[2][1]);
     });
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -60,6 +62,7 @@ const RequisitionEntry = () => {
           description: description,
           items_qty: items_list,
           username: username,
+          email: email,
         }
       )
       .then((res) => {
@@ -77,6 +80,7 @@ const RequisitionEntry = () => {
         description: description,
         items_qty: items_list,
         username: username,
+        email: email,
       })
       .then((res) => {
         navigation.navigate("TransactionsScreen");
